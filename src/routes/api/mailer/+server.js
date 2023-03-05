@@ -26,14 +26,18 @@ export const POST = async ({ request }) => {
     html: emailMarkup
   }
 
-  transporter.sendMail(mailOptions, (err, info) => {
-    if (err) {
-      console.log(err)
-      return json('error')
-    } else {
-      console.log(`Email sent: ${info.response}`)
-      return json('Success!')
-    }
+  await new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log(err)
+        reject(err)
+        // return json('error')
+      } else {
+        console.log(`Email sent: ${info.response}`)
+        resolve(info)
+        // return json('Success!')
+      }
+    })
   })
 
   return new Response(JSON.stringify({products}), { status: 200 })
